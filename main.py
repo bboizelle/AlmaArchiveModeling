@@ -7,6 +7,8 @@ from astropy.visualization import astropy_mpl_style
 
 plt.style.use(astropy_mpl_style)
 
+fitsFile = None
+
 # print working directory
 print("\nCurrent path is: ")
 cwd = os.getcwd()
@@ -30,6 +32,10 @@ hdul = fits.open(fitsFile)
 
 x = hdul[0].header['NAXIS1']
 y = hdul[0].header['NAXIS2']
+smallX = 0
+bigX = x
+smallY = 0
+bigY = y
 xy = str(x) + '/' + str(y)
 print("\nSpatial (x,y) dimensions:", xy, "pixels")
 print("Spectral (z) dimension:", str(hdul[0].header['NAXIS3']), "channels")
@@ -96,7 +102,11 @@ i = 0
 attempts = 1
 satisfied = False  # quit after 5, iterate keeping previous rectangles in thin lines, flip over y axis, ceiling for
 # ur, floor for ll, make sure null values are not accepted (won't decrease attempts)
-while satisfied == False:
+ix, iy = None, None
+coords = None
+bl = None
+ur = None
+while not satisfied:
     print("Line-fitting boundaries (attempt", attempts, end="")
     print(".)")
     print("Choose bottom-left location (click): ")
