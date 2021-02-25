@@ -87,14 +87,11 @@ if userStr == 'y':
 
 # open initial data cube inspection window
 winStr = targName + " " + molecularTrans + ": Initial Data Cube Inspection"
-
 data = hdul[0].data
 data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(smallY):int(bigY), int(smallX):int(bigX)]
 data = np.sum(data, axis=(0, 1))
-data = np.flip(data, axis=0)
-# FIXME somehow the data is messed up. flipped about x-axis, but pixel values stayed same. Flip values as well.
-fig = plt.figure()
-plt.imshow(data, cmap='gray')
+fig = plt.figure(num=winStr)
+plt.imshow(data, cmap='gray', origin='lower')  # UPDATED
 plt.colorbar()
 i = 0
 
