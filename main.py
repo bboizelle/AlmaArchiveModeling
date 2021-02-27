@@ -1,9 +1,10 @@
 import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
+
+# Ask about breaking file up into other functions / modules
 
 plt.style.use(astropy_mpl_style)
 
@@ -19,6 +20,7 @@ print("\nFITS files are: ")
 for file in os.listdir(cwd):
     if file.endswith(".fits"):
         print(file)
+
 # verify file name
 userStr = input("\nIs your file in the path (y/n): ")
 if userStr == 'y':
@@ -29,7 +31,6 @@ if userStr == 'y':
 
 # print file dimensions
 hdul = fits.open(fitsFile)
-
 x = hdul[0].header['NAXIS1']
 y = hdul[0].header['NAXIS2']
 smallX = 0
@@ -85,6 +86,41 @@ userStr = input("\nAllow for unequal dimensions? (e.g., a wide mosaic- y/n): ")
 if userStr == 'y':
     userStr = 'y'  # FIXME later
 
+
+def onclick(event):  # FIXME still needs to draw rectangle
+    ix, iy = event.xdata, event.ydata
+    if ix is not None:
+        global i
+        global coords
+        coords = [ix, iy]
+        global bl
+        global ur
+        global userStr
+        global MAX_ATTEMPTS
+        global attempts
+        if i == 0:
+            bl = coords
+            print("Choose top-right location (click): ")
+        if i == 1:
+            ur = coords
+            global userStr
+            userStr = input("Are you satisfied with the object fitting box (y/n): ")
+            if userStr == "y":
+                fig.canvas.mpl_disconnect(cid)
+                plt.close()
+            if userStr == "n":
+                global attempts
+                attempts = attempts + 1
+                print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
+                print("Choose bottom-left location (click): ")
+                i = -1
+        if attempts == MAX_ATTEMPTS + 1:
+            fig.canvas.mpl_disconnect(cid)
+            plt.close()
+            print("Wow, something is going seriously wrong for you. Good luck.")  # FIXME
+        i = i + 1
+
+
 # open initial data cube inspection window
 winStr = targName + " " + molecularTrans + ": Initial Data Cube Inspection"
 data = hdul[0].data
@@ -93,46 +129,22 @@ data = np.sum(data, axis=(0, 1))
 fig = plt.figure(num=winStr)
 plt.imshow(data, cmap='gray', origin='lower')  # UPDATED
 plt.colorbar()
-i = 0
 
 # get line-fitting boundaries
 attempts = 1
-satisfied = False  # quit after 5, iterate keeping previous rectangles in thin lines, flip over y axis, ceiling for
+MAX_ATTEMPTS = 5
+# quit after 5, iterate keeping previous rectangles in thin lines, flip over y axis, ceiling for
 # ur, floor for ll, make sure null values are not accepted (won't decrease attempts)
-ix, iy = None, None
-coords = None
-bl = None
-ur = None
-while not satisfied:
-    print("Line-fitting boundaries (attempt", attempts, end="")
-    print(".)")
-    print("Choose bottom-left location (click): ")
+disconnect = False
+coords = [None, None]
+bl = [None, None]
+ur = [None, None]
+i = 0
+print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
+print("Choose bottom-left location (click): ")
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
+plt.show()
+# FIXME down here we must calculate if the user gave a valid click
 
-
-    def onclick(event):  # FIXME still needs to draw rectangle
-        global ix, iy
-        ix, iy = event.xdata, event.ydata
-        global coords
-        coords = [ix, iy]
-        global i
-        i = i + 1
-        if i == 2:
-            fig.canvas.mpl_disconnect(cid)
-            plt.close()
-        if i == 1:
-            global bl
-            bl = coords
-            print("Choose top-right location (click): ")
-            return bl
-        else:
-            global ur
-            ur = coords
-            return ur
-
-
-    cid = fig.canvas.mpl_connect('button_press_event', onclick)
-    plt.show()
-    print(bl, ur)  # test
-    # FIXME down here we must calculate if the user gave a valid click
-    # FIXME prompt user, find out if satisfied
-    satisfied = True
+# For testing purposes
+print(bl, ur)
