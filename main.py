@@ -1,3 +1,4 @@
+import math
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,7 +30,7 @@ if userStr == 'y':
     # "NGC315_CO21_C5_bri_10kms.pbcor.fits"
     fitsFile = userStr
 
-# print file dimensions
+# Reads in original fits image dimensions
 hdul = fits.open(fitsFile)
 x = hdul[0].header['NAXIS1']
 y = hdul[0].header['NAXIS2']
@@ -50,6 +51,7 @@ if userStr == 'y':
     bigY = input("Upper y-value (integer, e.g., 500: ")
     x = int(bigX) - int(smallX)
     y = int(bigY) - int(smallY)
+
 # ask user if they want to undersample spacial dimensions
 userStr = input("\nUndersample the spacial (x,y) dimensions? (y/n): ")
 if userStr == 'y':
@@ -87,9 +89,10 @@ if userStr == 'y':
     userStr = 'y'  # FIXME later
 
 
-def onclick(event):  # FIXME still needs to draw rectangle
+# Function that reads mouse clicks' location within matplotlib image
+def onclick(event):
     ix, iy = event.xdata, event.ydata
-    if ix is not None:
+    if (ix is not None) and (ix > 1) and (iy > 1):
         global i
         global coords
         coords = [ix, iy]
@@ -117,7 +120,7 @@ def onclick(event):  # FIXME still needs to draw rectangle
         if attempts == MAX_ATTEMPTS + 1:
             fig.canvas.mpl_disconnect(cid)
             plt.close()
-            print("Wow, something is going seriously wrong for you. Good luck.")  # FIXME
+            print("Wow, something is going seriously wrong for you. Good luck.")
         i = i + 1
 
 
@@ -127,24 +130,22 @@ data = hdul[0].data
 data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(smallY):int(bigY), int(smallX):int(bigX)]
 data = np.sum(data, axis=(0, 1))
 fig = plt.figure(num=winStr)
-plt.imshow(data, cmap='gray', origin='lower')  # UPDATED
+plt.imshow(data, cmap='gray', origin='lower')
 plt.colorbar()
 
 # get line-fitting boundaries
-attempts = 1
 MAX_ATTEMPTS = 5
-# quit after 5, iterate keeping previous rectangles in thin lines, flip over y axis, ceiling for
-# ur, floor for ll, make sure null values are not accepted (won't decrease attempts)
+attempts = 1
+coords = [1, 0]
 disconnect = False
-coords = [None, None]
-bl = [None, None]
-ur = [None, None]
+bl = [1, 0]
+ur = [1, 0]
 i = 0
 print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
 print("Choose bottom-left location (click): ")
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 plt.show()
-# FIXME down here we must calculate if the user gave a valid click
-
+bl = [math.floor(bl[0]), math.floor(bl[1])]
+ur = [math.ceil(ur[0]), math.ceil(ur[1])]
 # For testing purposes
 print(bl, ur)
