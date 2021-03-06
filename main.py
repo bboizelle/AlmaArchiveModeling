@@ -1,6 +1,7 @@
 import math
 import os
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import numpy as np
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
@@ -89,22 +90,30 @@ if userStr == 'y':
     userStr = 'y'  # FIXME later
 
 
-# Function that reads mouse clicks' location within matplotlib image
+# Function that receives click events and returns valid coordinate pairs
 def onclick(event):
     ix, iy = event.xdata, event.ydata
     if (ix is not None) and (ix > 1) and (iy > 1):
         global i
-        global coords
-        coords = [ix, iy]
         global bl
         global ur
+        global attempts
+        attempts = attempts
+        if i == 1:
+            rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
+                                     edgecolor='r', facecolor="none")
+            ax.add_patch(rect)
+            plt.draw_all()
+            plt.pause(0.001)
+            i = 2
+        global coords
+        coords = [ix, iy]
         global userStr
         global MAX_ATTEMPTS
-        global attempts
         if i == 0:
             bl = coords
             print("Choose top-right location (click): ")
-        if i == 1:
+        if i == 2:
             ur = coords
             global userStr
             userStr = input("Are you satisfied with the object fitting box (y/n): ")
@@ -112,7 +121,8 @@ def onclick(event):
                 fig.canvas.mpl_disconnect(cid)
                 plt.close()
             if userStr == "n":
-                global attempts
+                bl = [1, 0]
+                ur = [1, 0]
                 attempts = attempts + 1
                 print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
                 print("Choose bottom-left location (click): ")
@@ -129,9 +139,8 @@ winStr = targName + " " + molecularTrans + ": Initial Data Cube Inspection"
 data = hdul[0].data
 data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(smallY):int(bigY), int(smallX):int(bigX)]
 data = np.sum(data, axis=(0, 1))
-fig = plt.figure(num=winStr)
-plt.imshow(data, cmap='gray', origin='lower')
-plt.colorbar()
+fig, ax = plt.subplots(1, num=winStr)
+ax.imshow(data, cmap='gray', origin='lower')
 
 # get line-fitting boundaries
 MAX_ATTEMPTS = 5
