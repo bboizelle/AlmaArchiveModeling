@@ -91,7 +91,7 @@ if userStr == 'y':
 
 
 # Function that receives click events and returns valid coordinate pairs
-def onclick(event):
+def onclick(event):  # FIXME Move to separate module
     ix, iy = event.xdata, event.ydata
     if (ix is not None) and (ix > 1) and (iy > 1):
         global i
@@ -142,7 +142,7 @@ data = np.sum(data, axis=(0, 1))
 fig, ax = plt.subplots(1, num=winStr)
 ax.imshow(data, cmap='gray', origin='lower')
 
-# get line-fitting boundaries
+# get line-fitting boundaries, FIXME look into pop-up yes/no prompts
 MAX_ATTEMPTS = 5
 attempts = 1
 coords = [1, 0]
@@ -158,3 +158,11 @@ bl = [math.floor(bl[0]), math.floor(bl[1])]
 ur = [math.ceil(ur[0]), math.ceil(ur[1])]
 # For testing purposes
 print(bl, ur)
+
+# Do first result panel.
+# Seen in emission or absorption, branch if/else emission absorption.
+# Is it clearly seen in initial window? y/n. Allow some option to go slice by slice, a skip button, satisfied button,
+# is this region complete, etc. Look into mask files to multiply cube, zeroing out any region not included within map
+# construction
+# region for data analysis later. While loop for polygon drawing. np.fit. Luminosity-weighted moment maps (1st, 2nd,
+# 3rd, 4th). Look into Matplotlib button or normalized pixel for exit.
