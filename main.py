@@ -20,7 +20,7 @@ userStr = ""
 def main():
     plt.style.use(astropy_mpl_style)
 
-    fitsFile = None
+    fits_file = None
 
     # print working directory
     print("\nCurrent path is: ")
@@ -39,16 +39,16 @@ def main():
         userStr = input(
             "\nEnter full ALMA file name (*.fits): ")  # copy this for use during testing
         # "NGC315_CO21_C5_bri_10kms.pbcor.fits"
-        fitsFile = userStr
+        fits_file = userStr
 
     # Reads in original fits image dimensions
-    hdul = fits.open(fitsFile)
+    hdul = fits.open(fits_file)
     x = hdul[0].header['NAXIS1']
     y = hdul[0].header['NAXIS2']
-    smallX = 0
-    bigX = x
-    smallY = 0
-    bigY = y
+    small_x = 0
+    big_x = x
+    small_y = 0
+    big_y = y
     xy = str(x) + '/' + str(y)
     print("\nSpatial (x,y) dimensions:", xy, "pixels")
     print("Spectral (z) dimension:", str(hdul[0].header['NAXIS3']), "channels")
@@ -56,12 +56,12 @@ def main():
     # ask user if they want to use subregion
     userStr = input("\nUse a subregion of the full spatial (x,y) dimensions? (y/n): ")
     if userStr == 'y':
-        smallX = input("Left x-value (integer, e.g., 100): ")
-        bigX = input("Right x-value (integer, e.g., 500): ")
-        smallY = input("Lower y-value (integer, e.g., 100): ")
-        bigY = input("Upper y-value (integer, e.g., 500: ")
-        int(bigX) - int(smallX)  # Can return x when needed
-        int(bigY) - int(smallY)  # Can return y when needed
+        small_x = input("Left x-value (integer, e.g., 100): ")
+        big_x = input("Right x-value (integer, e.g., 500): ")
+        small_y = input("Lower y-value (integer, e.g., 100): ")
+        big_y = input("Upper y-value (integer, e.g., 500: ")
+        int(big_x) - int(small_x)  # Can return x when needed
+        int(big_y) - int(small_y)  # Can return y when needed
 
     # ask user if they want to undersample spacial dimensions
     userStr = input("\nUndersample the spacial (x,y) dimensions? (y/n): ")
@@ -69,8 +69,8 @@ def main():
         userStr = 'y'  # FIXME later
 
     # trim unnecessary channels
-    cSpeed = 299792.458
-    channel = abs((hdul[0].header['CDELT3'] / hdul[0].header['RESTFRQ']) * cSpeed)
+    c_speed = 299792.458
+    channel = abs((hdul[0].header['CDELT3'] / hdul[0].header['RESTFRQ']) * c_speed)
     channel = round(channel, 2)
     print("\nCurrent velocity channel binning is", channel, "km/s")
     print("Channels over which line is")
@@ -84,10 +84,10 @@ def main():
         userStr = 'y'  # FIXME later
 
     # get target name
-    targName = input("Enter target name (e.g., NGC 1332): ")
+    targ_name = input("Enter target name (e.g., NGC 1332): ")
 
     # get molecular transition
-    molecularTrans = input("\nEnter molecular transition name (e.g., CO21 for CO(2-1)): ")
+    molecular_trans = input("\nEnter molecular transition name (e.g., CO21 for CO(2-1)): ")
 
     # allow user to subtract continuum if necessary
     userStr = input("\nNeed to subtract the continuum? (y/n): ")
@@ -100,7 +100,7 @@ def main():
         userStr = 'y'  # FIXME later
 
     # Function that receives click events and returns valid coordinate pairs
-    def onclick(event):  # FIXME Move to separate module
+    def onclick(event):
         ix, iy = event.xdata, event.ydata
         if (ix is not None) and (ix > 1) and (iy > 1):
             global i
@@ -125,6 +125,7 @@ def main():
             if i == 2:
                 ur = coords
                 global userStr
+                # display yes/no prompt with Tkinter
                 root = tk.Tk()
                 root.withdraw()
                 userStr = call()
@@ -146,11 +147,11 @@ def main():
             i = i + 1
 
     # open initial data cube inspection window
-    winStr = targName + " " + molecularTrans + ": Initial Data Cube Inspection"
+    win_str = targ_name + " " + molecular_trans + ": Initial Data Cube Inspection"
     data = hdul[0].data
-    data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(smallY):int(bigY), int(smallX):int(bigX)]
+    data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(small_y):int(big_y), int(small_x):int(big_x)]
     data = np.sum(data, axis=(0, 1))
-    fig, ax = plt.subplots(1, num=winStr)
+    fig, ax = plt.subplots(1, num=win_str)
     ax.imshow(data, cmap='gray', origin='lower')
 
     # get line-fitting boundaries
