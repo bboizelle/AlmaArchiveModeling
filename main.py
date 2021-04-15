@@ -180,11 +180,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# Do first result panel.
-# Seen in emission or absorption, branch if/else emission absorption.
-# Is it clearly seen in initial window? y/n. Allow some option to go slice by slice, a skip button, satisfied button,
-# is this region complete, etc. Look into mask files to multiply cube, zeroing out any region not included within map
-# construction
-# region for data analysis later. While loop for polygon drawing. np.fit. Luminosity-weighted moment maps (1st, 2nd,
-# 3rd, 4th). Look into Matplotlib button or normalized pixel for exit.
