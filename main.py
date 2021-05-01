@@ -13,8 +13,13 @@ attempts = 1
 coords = [1, 0]
 bl = [1, 0]
 ur = [1, 0]
+bbl = [1, 0]
+bur = [1, 0]
+rbl = [1, 0]
+rur = [1, 0]
 i = 0
 userStr = ""
+background = False
 
 
 def main():
@@ -101,9 +106,14 @@ def main():
 
     # Function that receives click events and returns valid coordinate pairs
     def onclick(event):
+        global background
+        global bbl
+        global bur
+        global rbl
+        global rur
+        global i
         ix, iy = event.xdata, event.ydata
-        if (ix is not None) and (ix > 1) and (iy > 1):
-            global i
+        if (ix is not None) and (ix > 1) and (iy > 1):  # Make sure click is within plot
             global bl
             global ur
             global attempts
@@ -112,6 +122,8 @@ def main():
                 rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
                                          edgecolor='r', facecolor="none")
                 ax.add_patch(rect)
+                plt.draw_all()
+                plt.pause(0.001)  # Extra pause to allow plt to draw box
                 plt.draw_all()
                 plt.pause(0.001)
                 i = 2
@@ -125,19 +137,40 @@ def main():
             if i == 2:
                 ur = coords
                 global userStr
-                # display yes/no prompt with Tkinter
                 root = tk.Tk()
                 root.withdraw()
-                userStr = call()
+                if not background:
+                    userStr = call('Are you satisfied with the object fitting box?')
+                else:
+                    userStr = call('Are you satisfied with the background fitting box?')
                 root.destroy()
                 if userStr == "y":
+                    i = 0
+                    attempts = 1
                     fig.canvas.mpl_disconnect(cid)
-                    plt.close()
+                    if not background:
+                        rbl = bl
+                        rur = ur
+                        print("\nBackground uncertainty boundaries (attempt " + str(attempts) + ".)")
+                        bl = [1, 0]
+                        ur = [1, 0]
+                        print("Choose bottom-left location (click): ")
+                        background = True
+                        fig.canvas.mpl_connect('button_press_event', onclick)  # Run again for background fitting box
+                        i = -1
+                    else:
+                        bbl = bl
+                        bur = ur
+                        fig.canvas.mpl_disconnect(cid)
+                        plt.close()
                 if userStr == "n":
                     bl = [1, 0]
                     ur = [1, 0]
                     attempts = attempts + 1
-                    print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
+                    if not background:
+                        print("\nLine-fitting boundaries (attempt " + str(attempts) + ".)")
+                    else:
+                        print("\nBackground uncertainty boundaries (attempt " + str(attempts) + ".)")
                     print("Choose bottom-left location (click): ")
                     i = -1
             if attempts == MAX_ATTEMPTS + 1:
@@ -154,28 +187,46 @@ def main():
     fig, ax = plt.subplots(1, num=win_str)
     ax.imshow(data, cmap='gray', origin='lower')
 
-    # get line-fitting boundaries
+    # get line-fitting boundaries and background fitting box
     global MAX_ATTEMPTS
     MAX_ATTEMPTS = 5
     global attempts
     attempts = 1
     global coords
     coords = [1, 0]
-    # disconnect = False
     global bl
     bl = [1, 0]
     global ur
     ur = [1, 0]
     global i
     i = 0
+    global background
+    global bbl
+    global bur
+    global rbl
+    global rur
     print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
     print("Choose bottom-left location (click): ")
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     plt.show()
-    bl = [math.floor(bl[0]), math.floor(bl[1])]
-    ur = [math.ceil(ur[0]), math.ceil(ur[1])]
+    # rbl is line-fitting bottom left
+    rbl = [math.floor(rbl[0]), math.floor(rbl[1])]
+    rur = [math.ceil(rur[0]), math.ceil(rur[1])]
+    # bbl is background bottom left
+    bbl = [math.floor(bbl[0]), math.floor(bbl[1])]
+    bur = [math.ceil(bur[0]), math.ceil(bur[1])]
     # For testing purposes
-    print(bl, ur)
+    print(rbl, rur)
+    print(bbl, bur)
+
+    emission_absorption = input("\nIs the line seen in emission or absorption? (e/a): ")
+    # "a" functionality not implemented currently
+
+    seen_in_window = input("\nIs the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
+                           "(y/n): ")
+
+    # Ask if I can see what the "no" branch looks like, or if I should skip to "yes" for now.
+    userStr = input("\nElliptical or polygon shape? (e/p): ")
 
 
 if __name__ == '__main__':

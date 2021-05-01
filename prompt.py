@@ -1,19 +1,11 @@
 from tkinter import messagebox as mb
 
 
-def call():
+def call(question):
     res = mb.askquestion('Satisfied?',
-                         'Are you satisfied with the object fitting box?')
+                         question)
     if res == 'yes':
         return "y"
 
     else:
         return "n"
-
-
-def main():
-    call()
-
-
-if __name__ == '__main__':
-    main()
