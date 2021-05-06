@@ -101,8 +101,10 @@ def main():
 
     # check if user is square
     userStr = input("\nAllow for unequal dimensions? (e.g., a wide mosaic- y/n): ")
-    if userStr == 'y':
-        userStr = 'y'  # FIXME later
+    if userStr == 'n':
+        square = True
+    else:
+        square = False
 
     # Function that receives click events and returns valid coordinate pairs
     def onclick(event):
@@ -119,8 +121,15 @@ def main():
             global attempts
             attempts = attempts
             if i == 1:
-                rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
-                                         edgecolor='r', facecolor="none")
+                if square and not background:
+                    line_distance = ((ix - bl[0]) + (iy - bl[1])) / 2
+                    ix = line_distance + bl[0]
+                    iy = line_distance + bl[1]
+                    rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
+                                             edgecolor='r', facecolor="none")
+                else:
+                    rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
+                                             edgecolor='r', facecolor="none")
                 ax.add_patch(rect)
                 plt.draw_all()
                 plt.pause(0.001)  # Extra pause to allow plt to draw box
