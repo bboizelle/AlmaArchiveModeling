@@ -7,6 +7,7 @@ from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
 from prompt import call
 import tkinter as tk
+from galaxyShape import shape
 
 MAX_ATTEMPTS = 5
 attempts = 1
@@ -189,11 +190,11 @@ def main():
             i = i + 1
 
     # open initial data cube inspection window
-    win_str = targ_name + " " + molecular_trans + ": Initial Data Cube Inspection"
+    win_str = targ_name + " " + molecular_trans
     data = hdul[0].data
     data = data[0:1, 0:(hdul[0].header['NAXIS3']), int(small_y):int(big_y), int(small_x):int(big_x)]
     data = np.sum(data, axis=(0, 1))
-    fig, ax = plt.subplots(1, num=win_str)
+    fig, ax = plt.subplots(1, num=win_str + ": Initial Data Cube Inspection")
     ax.imshow(data, cmap='gray', origin='lower')
 
     # get line-fitting boundaries and background fitting box
@@ -224,18 +225,15 @@ def main():
     # bbl is background bottom left
     bbl = [math.floor(bbl[0]), math.floor(bbl[1])]
     bur = [math.ceil(bur[0]), math.ceil(bur[1])]
-    # For testing purposes
-    print(rbl, rur)
-    print(bbl, bur)
 
-    emission_absorption = input("\nIs the line seen in emission or absorption? (e/a): ")
+    emission_absorption = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently
 
     seen_in_window = input("\nIs the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
-                           "(y/n): ")
+                           "(y/n): ")  # FIXME later
 
-    # Ask if I can see what the "no" branch looks like, or if I should skip to "yes" for now.
     userStr = input("\nElliptical or polygon shape? (e/p): ")
+    shape(userStr, data, win_str)
 
 
 if __name__ == '__main__':
