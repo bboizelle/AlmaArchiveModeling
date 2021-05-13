@@ -215,6 +215,7 @@ def main():
     global bur
     global rbl
     global rur
+
     print("Line-fitting boundaries (attempt " + str(attempts) + ".)")
     print("Choose bottom-left location (click): ")
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
@@ -222,9 +223,20 @@ def main():
     # rbl is line-fitting bottom left
     rbl = [math.floor(rbl[0]), math.floor(rbl[1])]
     rur = [math.ceil(rur[0]), math.ceil(rur[1])]
+    # avoid user error by swapping if needed
+    if rbl[0] > rur[0]:
+        tmp = rbl[0]
+        rbl[0] = rur[1]
+        rur[0] = tmp
+    if rbl[1] > rur[1]:
+        tmp = rbl[1]
+        rbl[1] = rur[1]
+        rur[1] = tmp
     # bbl is background bottom left
     bbl = [math.floor(bbl[0]), math.floor(bbl[1])]
     bur = [math.ceil(bur[0]), math.ceil(bur[1])]
+    # trim data to match line-fitting boundaries
+    limited_data = data[rbl[1]:rur[1], rbl[0]:rur[0]]
 
     emission_absorption = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently
@@ -233,7 +245,7 @@ def main():
                            "(y/n): ")  # FIXME later
 
     userStr = input("\nElliptical or polygon shape? (e/p): ")
-    shape(userStr, data, win_str)
+    shape(userStr, limited_data, win_str)
 
 
 if __name__ == '__main__':
