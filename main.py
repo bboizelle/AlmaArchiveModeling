@@ -1,13 +1,15 @@
 import math
 import os
-import matplotlib.pyplot as plt
+import tkinter as tk
 import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image, ImageDraw
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
-from prompt import call
-import tkinter as tk
+
 from galaxyShape import shape
+from prompt import call
 
 MAX_ATTEMPTS = 5
 attempts = 1
@@ -245,7 +247,29 @@ def main():
                            "(y/n): ")  # FIXME later
 
     userStr = input("\nElliptical or polygon shape? (e/p): ")
-    shape(userStr, limited_data, win_str)
+    vertices, angle = shape(userStr, limited_data, win_str)
+    vertices = list(map(tuple, vertices))
+    img = Image.new("L", (limited_data.shape[1], limited_data.shape[0]), 0)
+    if userStr == 'e':
+        vertices = vertices[0:3]
+        ImageDraw.Draw(img).ellipse([vertices[0][0] - (np.sqrt(np.square(vertices[0][0] - vertices[1][0]) +
+                                                               np.square(vertices[0][1] - vertices[1][1]))),
+                                     vertices[0][1] - (np.sqrt(np.square(vertices[0][0] - vertices[2][0]) +
+                                                               np.square(vertices[0][1] - vertices[2][1]))),
+                                     vertices[0][0] + (np.sqrt(np.square(vertices[0][0] - vertices[1][0]) +
+                                                               np.square(vertices[0][1] - vertices[1][1]))),
+                                     vertices[0][1] + (np.sqrt(np.square(vertices[0][0] - vertices[2][0]) +
+                                                               np.square(vertices[0][1] - vertices[2][1])))],
+                                    outline=1, fill=1)
+        img = img.rotate(-angle, center=vertices[0])
+        # Pad the array so center of ellipse is center array,
+        # then apply, then trim back to original dimensions
+        mask = np.array(img)
+    else:
+        ImageDraw.Draw(img).polygon(vertices, outline=1, fill=1)
+        mask = np.array(img)
+    plt.imshow(mask, origin='lower')
+    plt.show()
 
 
 if __name__ == '__main__':

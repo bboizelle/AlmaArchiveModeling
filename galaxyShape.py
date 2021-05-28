@@ -6,6 +6,7 @@ import tkinter as tk
 from matplotlib.widgets import Button
 from prompt import call
 
+angle = None
 vertices = []
 ax = plt.subplots
 fig = plt.subplots
@@ -33,7 +34,7 @@ def closer(event):
 
 def process_vertices(x, y):
     global vertices
-    vertices.append([x, y])
+    vertices.append([math.floor(x), math.floor(y)])
     [p.remove() for p in reversed(ax.patches)]
     poly = patches.Polygon(vertices, edgecolor='r', facecolor="none")
     ax.add_patch(poly)
@@ -50,7 +51,8 @@ def select_vertices(event):
 
 def process_ellipse(x, y):
     global vertices
-    vertices.append([x, y])
+    global angle
+    vertices.append([math.floor(x), math.floor(y)])
     if len(vertices) == 3:
         angle = math.degrees(math.atan((vertices[0][1] - vertices[1][1]) / (vertices[0][0] - vertices[1][0])))
         ellipse = patches.Ellipse(vertices[0], 2 * np.sqrt(np.square(vertices[0][0] - vertices[1][0]) +
@@ -81,7 +83,7 @@ def shape(typ, data, name):
     global fig
     global cid
     fig, ax = plt.subplots(1, num=name + ": Determining Line Regions")
-    ax.imshow(data, cmap='gray', origin='lower')
+    ax.imshow(data, cmap='jet', origin="lower")
     close_ax = plt.axes([0.81, 0.05, 0.1, 0.075])
     close_button = Button(close_ax, 'END')
     close_button.on_clicked(closer)
@@ -94,4 +96,4 @@ def shape(typ, data, name):
               "finished: ")
         cid = fig.canvas.mpl_connect('button_press_event', select_ellipse)
         plt.show()
-    return vertices
+    return vertices, angle
