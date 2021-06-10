@@ -10,6 +10,7 @@ from astropy.visualization import astropy_mpl_style
 
 from galaxyShape import shape
 from prompt import call
+from velocityChannelProfile import apply_mask
 
 MAX_ATTEMPTS = 5
 attempts = 1
@@ -268,7 +269,15 @@ def main():
     else:
         ImageDraw.Draw(img).polygon(vertices, outline=1, fill=1)
         mask = np.array(img)
-    plt.imshow(mask, origin='lower')
+
+    # Extract data from "data"
+    velocity_channels = np.array(hdul[0].data)
+    velocity_channels = velocity_channels[0, :, (int(small_y) + rbl[1]):(rur[1] + int(small_y)),
+                                                (int(small_x) + rbl[0]):(rur[0] + int(small_x))]
+
+    profile = apply_mask(velocity_channels, mask)
+
+    plt.plot(profile)
     plt.show()
 
 
