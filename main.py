@@ -248,10 +248,13 @@ def main():
                            "(y/n): ")  # FIXME later
 
     userStr = input("\nElliptical or polygon shape? (e/p): ")
+
+    # Call shape function, which returns a list of vertices and angle (if ellipse)
     vertices, angle = shape(userStr, limited_data, win_str)
     vertices = list(map(tuple, vertices))
     img = Image.new("L", (limited_data.shape[1], limited_data.shape[0]), 0)
     if userStr == 'e':
+        # Calculate elliptical mask
         vertices = vertices[0:3]
         ImageDraw.Draw(img).ellipse([vertices[0][0] - (np.sqrt(np.square(vertices[0][0] - vertices[1][0]) +
                                                                np.square(vertices[0][1] - vertices[1][1]))),
@@ -263,10 +266,9 @@ def main():
                                                                np.square(vertices[0][1] - vertices[2][1])))],
                                     outline=1, fill=1)
         img = img.rotate(-angle, center=vertices[0])
-        # Pad the array so center of ellipse is center array,
-        # then apply, then trim back to original dimensions
         mask = np.array(img)
     else:
+        # Calculate polygonal mask
         ImageDraw.Draw(img).polygon(vertices, outline=1, fill=1)
         mask = np.array(img)
 
@@ -275,8 +277,9 @@ def main():
     velocity_channels = velocity_channels[0, :, (int(small_y) + rbl[1]):(rur[1] + int(small_y)),
                                                 (int(small_x) + rbl[0]):(rur[0] + int(small_x))]
 
-    profile = apply_mask(velocity_channels, mask)
-
+    # Get velocity channel profile using mask
+    profile = apply_mask(velocity_channels, mask) * 1000
+    fig, ax = plt.subplots(1, num=win_str + ": Velocity Channel Profile")
     plt.plot(profile)
     plt.show()
 

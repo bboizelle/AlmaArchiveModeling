@@ -2,6 +2,7 @@ import numpy
 import numpy as np
 
 
+# Simple masking script
 def apply_mask(data, mask):
     profile = np.zeros(len(data[:, 0, 0]))
 
