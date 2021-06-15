@@ -225,6 +225,7 @@ def main():
     plt.show()
     # rbl is line-fitting bottom left
     rbl = [math.floor(rbl[0]), math.floor(rbl[1])]
+    # rur is line-fitting upper right
     rur = [math.ceil(rur[0]), math.ceil(rur[1])]
     # avoid user error by swapping if needed
     if rbl[0] > rur[0]:
