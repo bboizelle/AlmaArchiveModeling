@@ -10,7 +10,7 @@ from astropy.visualization import astropy_mpl_style
 
 from galaxyShape import shape
 from prompt import call
-from velocityChannelProfile import apply_mask
+from velocityChannelProfile import apply_mask, velocities
 
 MAX_ATTEMPTS = 5
 attempts = 1

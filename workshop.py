@@ -9,7 +9,7 @@ from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
 
 from prompt import call
-from velocityChannelProfile import apply_mask
+from velocityChannelProfile import apply_mask, velocities
 
 plt.style.use(astropy_mpl_style)
 
@@ -47,7 +47,7 @@ def main():
     bmaj = hdul[0].header['BMAJ'] * 3600
     bmin = hdul[0].header['BMIN'] * 3600
     cdelt2 = hdul[0].header['CDELT2'] * 3600
-    beam_area = ((1.1331 * bmaj * bmin) / (cdelt2**2))  # Units in arcseconds
+    beam_area = ((1.1331 * bmaj * bmin) / (cdelt2 ** 2))  # Units in arcseconds
 
     c_speed = 299792.458  # km/sec
 
@@ -104,7 +104,7 @@ def main():
             if i == 1:
                 rect = patches.Rectangle((bl[0], bl[1]), (ix - bl[0]), (iy - bl[1]), linewidth=attempts,
                                          edgecolor='r', facecolor="none")
-                ax.add_patch(rect)
+                # ax.add_patch(rect)
                 plt.draw_all()
                 plt.pause(0.001)
                 plt.draw_all()
@@ -139,7 +139,7 @@ def main():
                         ur = [1, 0]
                         print("Choose bottom-left location (click): ")
                         background = True
-                        fig.canvas.mpl_connect('button_press_event', onclick)
+                        # fig.canvas.mpl_connect('button_press_event', onclick)
                         i = -1
                     else:
                         bbl = bl
@@ -215,7 +215,6 @@ def main():
     print("\nElliptical or polygon shape? (e/p): ")
     userStr = 'e'
     # vertices, angle = shape(userStr, limited_data, win_str)
-    # print(vertices, angle)
     # vertices = list(map(tuple, vertices))
     img = Image.new("L", (limited_data.shape[1], limited_data.shape[0]), 0)
     if userStr == 'e':
@@ -243,25 +242,7 @@ def main():
 
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
-    fig, ax = plt.subplots(1, num=win_str + ": Velocity Channel Profile")
-
-    lines = np.ones(naxis3)
-    lines[0] = v[1] - v[0]
-    for i in range(len(lines) - 1):
-        lines[i + 1] = v[i + 1] - v[i]
-
-    # cdelt3 my be pos or neg (don't worry about flipped)
-    ax.bar(v, profile * 1000, lines, fill='false', color='white', edgecolor='black')  # Histogram plot
-    plt.show()
-
-    galaxy_velocity = input("\nGalaxy (average) velocity (c*z): ")
-    # Have user click on locations, use pop up box (similar to what has been done earlier, same thing for fitting
-    # region lower and upper bounds. Remind user to include wing structure if present
-
-    integrated_flux = profile * v  # in jy km / s, only between the channel ranges they selected
-    # sum up integrated flux over the range of channels they have selected (lower to upper bound) ^--
-    #    maybe relabelling axis would be easier than converting channels to...? -look into
-    # print these units on side of figure- see Box demo for example
+    velocities(naxis3, v, profile, win_str)
 
 
 if __name__ == '__main__':
