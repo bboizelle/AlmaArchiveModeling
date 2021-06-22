@@ -25,6 +25,7 @@ def closer(event):
     user_str = call('Are you satisfied with the object shape outline?')
     if user_str == 'y':
         fig.canvas.mpl_disconnect(cid)
+        plt.savefig("shape_outline.png")
         plt.close()
     else:
         ATTEMPTS = ATTEMPTS - 1

@@ -175,6 +175,7 @@ def main():
                         bbl = bl
                         bur = ur
                         fig.canvas.mpl_disconnect(cid)
+                        plt.savefig("line_fitting_boundaries.png")
                         plt.close()
                 if userStr == "n":
                     bl = [1, 0]
@@ -188,6 +189,7 @@ def main():
                     i = -1
             if attempts == MAX_ATTEMPTS + 1:
                 fig.canvas.mpl_disconnect(cid)
+                plt.savefig("line_fitting_boundaries.png")
                 plt.close()
                 print("Wow, something is going seriously wrong for you. Good luck.")
             i = i + 1
