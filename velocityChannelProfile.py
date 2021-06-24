@@ -26,7 +26,7 @@ def closer(event):
     global ATTEMPTS
     root = tk.Tk()
     root.withdraw()
-    user_str = call('Are you satisfied with the object shape outline?')
+    user_str = call('Are you sure you want to close? Your work will not be saved.')
     if user_str == 'y':
         fig.canvas.mpl_disconnect(cid)
         plt.savefig("velocity_channel_profile.png")
@@ -54,10 +54,10 @@ def velocities(naxis3, v, profile, win_str):
     ax.set_xlabel('Velocity Channel (km/s)', labelpad=10.0, fontsize=12)
     plt.gcf().text(0.82, 0.75, "Velocities (km/s):", fontsize=11)
     plt.subplots_adjust(right=0.8)
-    close_ax = plt.axes([0.81, 0.05, 0.1, 0.075])
+    close_ax = plt.axes([0.85, 0.05, 0.1, 0.075])
     close_button = Button(close_ax, 'END')
     close_button.on_clicked(closer)
-    galaxy_velocity = input("\nGalaxy (average) velocity (c*z): ")  # TODO make print
+    print("\nClick on galaxy (average) velocity (c*z): ")
     # Have user click on locations, use pop up box (similar to what has been done earlier, same thing for fitting
     # region lower and upper bounds. Remind user to include wing structure if present
 
