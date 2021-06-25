@@ -1,4 +1,3 @@
-import numpy
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
@@ -9,6 +8,7 @@ ax = plt.subplots
 fig = plt.subplots
 cid = None
 ATTEMPTS = 5
+L = 0
 
 
 # Simple masking script
@@ -16,7 +16,7 @@ def apply_mask(data, mask):
     profile = np.zeros(len(data[:, 0, 0]))
 
     for i in range(len(profile)):
-        profile[i] = np.sum(numpy.multiply(data[i, :, :], mask))
+        profile[i] = np.sum(np.multiply(data[i, :, :], mask))
 
     return profile
 
@@ -34,12 +34,23 @@ def closer(event):
     else:
         ATTEMPTS = ATTEMPTS - 1
         print(str(ATTEMPTS) + " attempts remaining")
-        # shape(globalTyp, globalData, globalName)
+
+
+def process_click(x):
+    global L
+    if L == 0:
+        pass
+
+
+def on_click(event):
+    if (event.xdata is not None) and (event.xdata > 1):
+        process_click(event.xdata)
 
 
 def velocities(naxis3, v, profile, win_str):
     global fig
     global ax
+    global cid
 
     fig, ax = plt.subplots(1, num=win_str + ": Velocity Channel Profile")
 
@@ -60,6 +71,7 @@ def velocities(naxis3, v, profile, win_str):
     print("\nClick on galaxy (average) velocity (c*z): ")
     # Have user click on locations, use pop up box (similar to what has been done earlier, same thing for fitting
     # region lower and upper bounds. Remind user to include wing structure if present
+    cid = fig.canvas.mpl_connect('button_press_event', on_click)
 
     plt.show()
 
