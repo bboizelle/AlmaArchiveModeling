@@ -1,14 +1,17 @@
+import tkinter as tk
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
+import math
 from prompt import call
-import tkinter as tk
 
 ax = plt.subplots
 fig = plt.subplots
 cid = None
 ATTEMPTS = 5
 L = 0
+M = 0
 
 
 # Simple masking script
@@ -38,8 +41,40 @@ def closer(event):
 
 def process_click(x):
     global L
+    global M
     if L == 0:
-        pass
+        ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="green", linestyles="dashed")
+        plt.gcf().text(0.82, 0.5, "V_ave=" + str(math.floor(x)) + ".", fontsize=11)
+        plt.draw_all()
+        plt.pause(0.001)  # Extra pause to allow plt to draw box
+        plt.draw_all()
+        plt.pause(0.001)
+        L = 1
+    if L == 1:
+        root = tk.Tk()
+        root.withdraw()
+        user_str = call('Are you satisfied with the systemic velocity?')
+        if user_str != 'y':
+            L = 0
+        else:
+            print("\nCLick minimum velocity to allow for Gaussian peak in line fitting: ")
+            L = 2
+            return
+    if L == 2:
+        ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="red", linestyles="dashed")
+        plt.draw_all()
+        plt.pause(0.001)  # Extra pause to allow plt to draw box
+        plt.draw_all()
+        plt.pause(0.001)
+        if M == 1:
+            root = tk.Tk()
+            root.withdraw()
+            user_str = call('Are you satisfied with the velocity limits?')
+            if user_str != 'y':
+                L = 0
+        if M == 0:
+            print("CLick maximum velocity to allow for Gaussian peak in line fitting: ")
+            M = 1
 
 
 def on_click(event):
