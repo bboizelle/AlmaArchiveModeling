@@ -11,6 +11,8 @@ cid = None
 ATTEMPTS = 5
 L = 0
 M = 0
+v_min = 0
+v_max = 0
 
 
 # Simple masking script
@@ -26,6 +28,8 @@ def apply_mask(data, mask):
 def process_click(x):
     global L
     global M
+    global v_min
+    global v_max
     if L == 0:  # Get avg velocity
         ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="green", linestyles="dashed")
         plt.gcf().text(0.82, 0.65, r"V$_{ave}$=" + str(math.floor(x)) + ".", fontsize=11)
@@ -52,6 +56,7 @@ def process_click(x):
         plt.draw_all()
         plt.pause(0.001)
         if M == 1:
+            v_max = math.ceil(x)
             plt.gcf().text(0.82, 0.45, r"V$_{max}$=" + str(math.floor(x)) + ".", fontsize=11)
             plt.draw_all()
             plt.pause(0.001)  # Extra pause to allow plt to draw box
@@ -63,10 +68,12 @@ def process_click(x):
             if user_str != 'y':
                 L = 0
             else:
+                user_str = call('Would you like to calculate uncertainty?')
                 fig.canvas.mpl_disconnect(cid)
                 plt.savefig("velocity_channel_profile.png")
                 plt.close()
         if M == 0:
+            v_min = math.floor(x)
             plt.gcf().text(0.82, 0.55, r"V$_{min}$=" + str(math.floor(x)) + ".", fontsize=11)
             plt.draw_all()
             plt.pause(0.001)  # Extra pause to allow plt to draw box
@@ -105,6 +112,15 @@ def velocities(naxis3, v, profile, win_str):
     cid = fig.canvas.mpl_connect('button_press_event', on_click)
 
     plt.show()
+
+    print(v_min)
+    print(v_max)
+    print(v)
+    upper_velocity = np.where(v > v_min)
+    lower_velocity = np.where(v < v_max)
+    print(upper_velocity)
+    print(lower_velocity)
+    print(profile * 1000)
 
     integrated_flux = profile * v  # in jy km / s, only between the channel ranges they selected
     # sum up integrated flux over the range of channels they have selected (lower to upper bound) ^--

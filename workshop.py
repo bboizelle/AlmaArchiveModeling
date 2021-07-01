@@ -249,7 +249,8 @@ if __name__ == '__main__':
     main()
 
 # DONE / ASK- Bar graph looking better?
-# TODO- add box showing synthesized beam- how?
-# Possibly use regions on either side of double-horned profile to calculate uncertainty. Just ASK. Have user select
-# background region. Error = rms * delta_v * sqrt(N_chan). Put in Jy km / s
-# https://www-astro.physics.ox.ac.uk/~mxc/software/
+# TODO- add box showing synthesized beam- how? TODO- Possibly use regions on
+#  either side of double-horned profile to calculate uncertainty. Just ASK. Have user select background region.
+#  Error = rms * delta_v * sqrt(N_chan). Put in Jy km / s
+
+# https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info
