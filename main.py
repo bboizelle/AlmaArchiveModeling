@@ -52,6 +52,23 @@ def main():
 
     # Reads in original fits image dimensions
     hdul = fits.open(fits_file)
+
+    bmaj = hdul[0].header['BMAJ'] * 3600
+    bmin = hdul[0].header['BMIN'] * 3600
+    cdelt2 = hdul[0].header['CDELT2'] * 3600
+    beam_area = ((1.1331 * bmaj * bmin) / (cdelt2 ** 2))  # Units in arcseconds
+
+    c_speed = 299792.458  # km/sec
+
+    crval3 = hdul[0].header['CRVAL3']
+    cdelt3 = hdul[0].header['CDELT3']
+    naxis3 = hdul[0].header['NAXIS3']
+    crpix3 = hdul[0].header['crpix3']
+    nu_obs = crval3 + cdelt3 * (np.arange(naxis3) - crpix3 + 1)
+
+    nu_0 = hdul[0].header['RESTFRQ']
+    v = c_speed * ((nu_0 / nu_obs) - 1)  # Velocity definition due to cosmological expansion
+
     x = hdul[0].header['NAXIS1']
     y = hdul[0].header['NAXIS2']
     small_x = 0
@@ -244,11 +261,11 @@ def main():
     # trim data to match line-fitting boundaries
     limited_data = data[rbl[1]:rur[1], rbl[0]:rur[0]]
 
-    emission_absorption = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
+    userStr = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently
 
-    seen_in_window = input("\nIs the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
-                           "(y/n): ")  # FIXME later
+    userStr = input("\nIs the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
+                    "(y/n): ")  # FIXME later
 
     userStr = input("\nElliptical or polygon shape? (e/p): ")
 
@@ -281,10 +298,10 @@ def main():
                                                 (int(small_x) + rbl[0]):(rur[0] + int(small_x))]
 
     # Get velocity channel profile using mask
-    profile = apply_mask(velocity_channels, mask) * 1000
-    fig, ax = plt.subplots(1, num=win_str + ": Velocity Channel Profile")
-    plt.plot(profile)
-    plt.show()
+    profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
+
+    # calculate avg and velocity bounds
+    velocities(naxis3, v, profile, win_str)
 
 
 if __name__ == '__main__':
