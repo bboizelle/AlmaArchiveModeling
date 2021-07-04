@@ -113,17 +113,13 @@ def velocities(naxis3, v, profile, win_str):
 
     plt.show()
 
-    print(v_min)
-    print(v_max)
-    print(v)
     upper_velocity = np.where(v > v_min)
     lower_velocity = np.where(v < v_max)
-    print(upper_velocity)
-    print(lower_velocity)
 
     integrated_flux = profile * v  # in jy km / s, only between the channel ranges they selected
-    integrated_flux = integrated_flux[np.min(lower_velocity): np.max(upper_velocity)]
+    total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
+    num_chan = len(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
+    integrated_flux = total_flux / num_chan
     print(integrated_flux)
-    # sum up integrated flux over the range of channels they have selected (lower to upper bound) ^--
-    #    maybe relabelling axis would be easier than converting channels to...? -look into
+
     return integrated_flux
