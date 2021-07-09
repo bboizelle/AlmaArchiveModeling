@@ -118,8 +118,6 @@ def velocities(naxis3, v, profile, win_str):
 
     integrated_flux = profile * v  # in jy km / s, only between the channel ranges they selected
     total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
-    num_chan = len(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
-    integrated_flux = total_flux / num_chan
-    print(integrated_flux)
+    integrated_flux = total_flux / (v_max - v_min)
 
     return integrated_flux
