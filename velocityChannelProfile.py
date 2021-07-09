@@ -13,6 +13,11 @@ L = 0
 M = 0
 v_min = 0
 v_max = 0
+integrated_flux = 0
+vel = np.array([])
+prof = np.array([])
+background_min = 0
+background_max = 0
 
 
 # Simple masking script
@@ -30,6 +35,12 @@ def process_click(x):
     global M
     global v_min
     global v_max
+    global integrated_flux
+    global prof
+    global vel
+    global background_min
+    global background_max
+
     if L == 0:  # Get avg velocity
         ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="green", linestyles="dashed")
         plt.gcf().text(0.82, 0.65, r"V$_{ave}$=" + str(math.floor(x)) + ".", fontsize=11)
@@ -68,10 +79,29 @@ def process_click(x):
             if user_str != 'y':
                 L = 0
             else:
+
+                upper_velocity = np.where(vel > v_min)
+                lower_velocity = np.where(vel < v_max)
+
+                integrated_flux = prof * vel  # in jy km / s, only between the channel ranges they selected
+                total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
+                integrated_flux = total_flux / (v_max - v_min)
+
+                plt.gcf().text(0.82, 0.35, "Estimated Flux:", fontsize=11)
+                plt.gcf().text(0.82, 0.3, str(round(integrated_flux, 2)) + " Jy km/s", fontsize=11)
+                plt.draw_all()
+                plt.pause(0.001)  # Extra pause to allow plt to draw box
+                plt.draw_all()
+                plt.pause(0.001)
+
                 user_str = call('Would you like to calculate uncertainty?')
-                fig.canvas.mpl_disconnect(cid)
-                plt.savefig("velocity_channel_profile.png")
-                plt.close()
+                if user_str == "y":
+                    print("Click minimum and maximum velocities of background region.")
+                    L = 3
+                else:
+                    fig.canvas.mpl_disconnect(cid)
+                    plt.savefig("velocity_channel_profile.png")
+                    plt.close()
         if M == 0:
             v_min = math.floor(x)
             plt.gcf().text(0.82, 0.55, r"V$_{min}$=" + str(math.floor(x)) + ".", fontsize=11)
@@ -83,6 +113,14 @@ def process_click(x):
                   "present): ")
             M = 1
 
+    if L == 3:
+        background_min = math.ceil(x)
+        L = 4
+        return
+    if L == 4:
+        background_max = math.ceil(x)
+        print(background_min, background_max)
+
 
 def on_click(event):
     if (event.xdata is not None) and (event.xdata > 1):
@@ -93,6 +131,12 @@ def velocities(naxis3, v, profile, win_str):
     global fig
     global ax
     global cid
+    global integrated_flux
+    global vel
+    global prof
+
+    prof = profile
+    vel = v
 
     fig, ax = plt.subplots(1, num=win_str + ": Velocity Channel Profile")
 
@@ -112,12 +156,5 @@ def velocities(naxis3, v, profile, win_str):
     cid = fig.canvas.mpl_connect('button_press_event', on_click)
 
     plt.show()
-
-    upper_velocity = np.where(v > v_min)
-    lower_velocity = np.where(v < v_max)
-
-    integrated_flux = profile * v  # in jy km / s, only between the channel ranges they selected
-    total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
-    integrated_flux = total_flux / (v_max - v_min)
 
     return integrated_flux
