@@ -244,13 +244,22 @@ def main():
 
     velocities(naxis3, v, profile, win_str)
 
+    # Moving on to Voronoi binning section
+
+    print("\nMoving on to the next section")
+    userStr = input("Press ENTER to continue...")
+    while userStr != "":
+        userStr = input("Press ENTER to continue...")
+
+    userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
+
 
 if __name__ == '__main__':
     main()
 
 # DONE / ASK- Bar graph looking better?
 # TODO- add box showing synthesized beam- how?
-# TODO- Possibly use regions on either side of double-horned profile to calculate uncertainty. Just ASK. Have user
+# DONE- Possibly use regions on either side of double-horned profile to calculate uncertainty. Just ASK. Have user
 #  select background region. Error = rms * delta_v * sqrt(N_chan). Put in Jy km / s
 
 # https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info

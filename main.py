@@ -303,6 +303,15 @@ def main():
     # calculate avg and velocity bounds
     velocities(naxis3, v, profile, win_str)
 
+    # Moving on to Voronoi binning section
+
+    print("\nMoving on to the next section")
+    userStr = input("Press ENTER to continue...")
+    while userStr != "":
+        userStr = input("Press ENTER to continue...")
+
+    userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
+
 
 if __name__ == '__main__':
     main()
