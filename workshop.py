@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
-
+from voronoi import binning
 from prompt import call
 from velocityChannelProfile import apply_mask, velocities
 
@@ -252,6 +252,7 @@ def main():
         userStr = input("Press ENTER to continue...")
 
     userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
+    binning(userStr)
 
 
 if __name__ == '__main__':
