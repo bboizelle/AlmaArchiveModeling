@@ -242,7 +242,7 @@ def main():
 
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
-    velocities(naxis3, v, profile, win_str)
+    integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
 
     # Moving on to Voronoi binning section
 
@@ -258,9 +258,9 @@ def main():
 if __name__ == '__main__':
     main()
 
-# DONE / ASK- Bar graph looking better?
 # TODO- add box showing synthesized beam- how?
-# DONE- Possibly use regions on either side of double-horned profile to calculate uncertainty. Just ASK. Have user
-#  select background region. Error = rms * delta_v * sqrt(N_chan). Put in Jy km / s
-
 # https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info
+# TODO- Ask if they would like to select the second window.
+# TODO- Return vel and prof from velocity_channel_profile in txt file, with different columns,
+#   give descriptive name, line_prof.txt
+# TODO- calculate standard deviation/RMS for noise from background fitting box.

@@ -20,6 +20,9 @@ background_min = 0
 background_max = 0
 upper_velocity = 0
 lower_velocity = 0
+lines = np.array([])
+total_flux = 0
+error = 0
 
 
 # Simple masking script
@@ -44,6 +47,8 @@ def process_click(x):
     global background_max
     global upper_velocity
     global lower_velocity
+    global total_flux
+    global error
 
     if L == 0:  # Get avg velocity
         ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="green", linestyles="dashed")
@@ -83,16 +88,16 @@ def process_click(x):
             if user_str != 'y':
                 L = 0
             else:
-
+                # flip vel if decreasing
                 upper_velocity = np.where(vel > v_min)
                 lower_velocity = np.where(vel < v_max)
-
-                integrated_flux = prof * vel  # in jy km / s, only between the channel ranges they selected
+                print(np.max(upper_velocity))
+                print(np.min(lower_velocity))
+                integrated_flux = prof * np.abs(lines)  # in jy km / s, only between the channel ranges they selected
                 total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
-                integrated_flux = total_flux / (v_max - v_min)
 
                 plt.gcf().text(0.82, 0.35, "Estimated Flux:", fontsize=11)
-                plt.gcf().text(0.82, 0.3, str(round(integrated_flux, 2)) + " Jy km/s", fontsize=11)
+                plt.gcf().text(0.82, 0.3, str(round(float(total_flux), 2)) + " Jy km/s", fontsize=11)
                 plt.draw_all()
                 plt.pause(0.001)  # Extra pause to allow plt to draw box
                 plt.draw_all()
@@ -123,7 +128,7 @@ def process_click(x):
         L = 4
         ax.vlines(background_min, 0, 1, transform=ax.get_xaxis_transform(), colors="red", linestyles="dashed")
         plt.draw_all()
-        plt.pause(0.001)  # Extra pause to allow plt to draw box
+        plt.pause(0.001)  # Extra pause to allow plt to draw
         plt.draw_all()
         plt.pause(0.001)
         return
@@ -132,7 +137,7 @@ def process_click(x):
 
         ax.vlines(background_max, 0, 1, transform=ax.get_xaxis_transform(), colors="red", linestyles="dashed")
         plt.draw_all()
-        plt.pause(0.001)  # Extra pause to allow plt to draw box
+        plt.pause(0.001)  # Extra pause to allow plt to draw
         plt.draw_all()
         plt.pause(0.001)
 
@@ -140,7 +145,8 @@ def process_click(x):
         lower_error_velocity = np.where(vel < background_max)
 
         error_flux = prof[np.min(lower_error_velocity):np.max(upper_error_velocity)]
-        flux_squared = error_flux**2
+        # may have to append this and do the same sort of thing
+        flux_squared = error_flux ** 2
         error_flux_sum = np.sum(flux_squared)
         n_chan_error = len(error_flux)
         error_flux_avg = error_flux_sum / n_chan_error
@@ -173,6 +179,7 @@ def velocities(naxis3, v, profile, win_str):
     global integrated_flux
     global vel
     global prof
+    global lines
 
     prof = profile
     vel = v
@@ -196,4 +203,4 @@ def velocities(naxis3, v, profile, win_str):
 
     plt.show()
 
-    return integrated_flux
+    return total_flux, error
