@@ -88,11 +88,12 @@ def process_click(x):
             if user_str != 'y':
                 L = 0
             else:
-                # flip vel if decreasing
+
+                if vel[1] > vel[0]:
+                    np.flip(vel)
+
                 upper_velocity = np.where(vel > v_min)
                 lower_velocity = np.where(vel < v_max)
-                print(np.max(upper_velocity))
-                print(np.min(lower_velocity))
                 integrated_flux = prof * np.abs(lines)  # in jy km / s, only between the channel ranges they selected
                 total_flux = np.sum(integrated_flux[np.min(lower_velocity): np.max(upper_velocity)])
 
