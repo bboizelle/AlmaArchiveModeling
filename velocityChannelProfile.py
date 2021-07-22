@@ -23,6 +23,8 @@ lower_velocity = 0
 lines = np.array([])
 total_flux = 0
 error = 0
+upper_error_velocity = []
+lower_error_velocity = []
 
 
 # Simple masking script
@@ -49,6 +51,8 @@ def process_click(x):
     global lower_velocity
     global total_flux
     global error
+    global upper_error_velocity
+    global lower_error_velocity
 
     if L == 0:  # Get avg velocity
         ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), colors="green", linestyles="dashed")
@@ -147,11 +151,17 @@ def process_click(x):
             print("\nClick minimum and maximum velocities of background region.")
             L = 3
             return
-
-        upper_error_velocity = np.where(vel > background_min[0])
-        lower_error_velocity = np.where(vel < background_max[0])
+        print(background_min)
+        print(background_max)
+        print(vel)
+        upper_error_velocity.append(np.where(vel > background_min[0]))
+        lower_error_velocity.append(np.where(vel < background_max[0]))
         for i in range(1, len(background_min)):
-            pass
+            np.append(upper_error_velocity, np.where(vel > background_min[i]))
+            np.append(lower_error_velocity, np.where(vel < background_max[i]))
+
+        print(upper_error_velocity)
+        print(lower_error_velocity)
 
         error_flux = prof[np.min(lower_error_velocity):np.max(upper_error_velocity)]
         # may have to append this and do the same sort of thing
