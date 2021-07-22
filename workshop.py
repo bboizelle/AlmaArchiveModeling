@@ -264,3 +264,4 @@ if __name__ == '__main__':
 # TODO- Return vel and prof from velocity_channel_profile in txt file, with different columns,
 #   give descriptive name, line_prof.txt
 # TODO- calculate standard deviation/RMS for noise from background fitting box.
+# DONE- ask if the fix I did for vel to flip it is sufficient

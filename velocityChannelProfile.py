@@ -16,8 +16,8 @@ v_max = 0
 integrated_flux = 0
 vel = np.array([])
 prof = np.array([])
-background_min = 0
-background_max = 0
+background_min = []
+background_max = []
 upper_velocity = 0
 lower_velocity = 0
 lines = np.array([])
@@ -125,7 +125,7 @@ def process_click(x):
             M = 1
 
     if L == 3:  # Get background info for error calculations
-        background_min = math.ceil(x)
+        background_min.append(math.ceil(x))
         L = 4
         ax.vlines(background_min, 0, 1, transform=ax.get_xaxis_transform(), colors="red", linestyles="dashed")
         plt.draw_all()
@@ -134,7 +134,7 @@ def process_click(x):
         plt.pause(0.001)
         return
     if L == 4:  # Calculate error, output to .png, and close
-        background_max = math.floor(x)
+        background_max.append(math.floor(x))
 
         ax.vlines(background_max, 0, 1, transform=ax.get_xaxis_transform(), colors="red", linestyles="dashed")
         plt.draw_all()
@@ -142,8 +142,16 @@ def process_click(x):
         plt.draw_all()
         plt.pause(0.001)
 
-        upper_error_velocity = np.where(vel > background_min)
-        lower_error_velocity = np.where(vel < background_max)
+        user_str = call('Calculate uncertainty over another window?')
+        if user_str == 'y':
+            print("\nClick minimum and maximum velocities of background region.")
+            L = 3
+            return
+
+        upper_error_velocity = np.where(vel > background_min[0])
+        lower_error_velocity = np.where(vel < background_max[0])
+        for i in range(1, len(background_min)):
+            pass
 
         error_flux = prof[np.min(lower_error_velocity):np.max(upper_error_velocity)]
         # may have to append this and do the same sort of thing
