@@ -156,9 +156,14 @@ def process_click(x):
         print(vel)
         upper_error_velocity.append(np.where(vel > background_min[0]))
         lower_error_velocity.append(np.where(vel < background_max[0]))
+        print(upper_error_velocity)
+        print(lower_error_velocity)
         for i in range(1, len(background_min)):
             np.append(upper_error_velocity, np.where(vel > background_min[i]))
             np.append(lower_error_velocity, np.where(vel < background_max[i]))
+            print("here")
+            print(i)
+            print(upper_error_velocity[1])
 
         print(upper_error_velocity)
         print(lower_error_velocity)
