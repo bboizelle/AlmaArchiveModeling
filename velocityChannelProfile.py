@@ -146,37 +146,28 @@ def process_click(x):
         plt.draw_all()
         plt.pause(0.001)
 
-        user_str = call('Calculate uncertainty over another window?')
+        user_str = call('Use another background region?')
         if user_str == 'y':
             print("\nClick minimum and maximum velocities of background region.")
             L = 3
             return
-        print(background_min)
-        print(background_max)
-        print(vel)
+
         upper_error_velocity.append(np.where(vel > background_min[0]))
         lower_error_velocity.append(np.where(vel < background_max[0]))
-        print(upper_error_velocity)
-        print(lower_error_velocity)
         for i in range(1, len(background_min)):
-            np.append(upper_error_velocity, np.where(vel > background_min[i]))
-            np.append(lower_error_velocity, np.where(vel < background_max[i]))
-            print("here")
-            print(i)
-            print(upper_error_velocity[1])
+            upper_error_velocity.append(np.where(vel > background_min[i]))
+            lower_error_velocity.append(np.where(vel < background_max[i]))
+        error_flux = []
+        for i in range(len(upper_error_velocity)):
+            error_flux = prof[np.min(lower_error_velocity[i]):np.max(upper_error_velocity[i])]
 
-        print(upper_error_velocity)
-        print(lower_error_velocity)
-
-        error_flux = prof[np.min(lower_error_velocity):np.max(upper_error_velocity)]
-        # may have to append this and do the same sort of thing
         flux_squared = error_flux ** 2
         error_flux_sum = np.sum(flux_squared)
         n_chan_error = len(error_flux)
         error_flux_avg = error_flux_sum / n_chan_error
         r_m_s = math.sqrt(error_flux_avg)
-
         n_chan_prof = np.max(upper_velocity) - np.min(lower_velocity)
+
         error = r_m_s * math.sqrt(n_chan_prof) * ((v_max - v_min) / n_chan_prof)
 
         plt.gcf().text(0.82, 0.2, "Error:", fontsize=11)
