@@ -187,6 +187,16 @@ def on_click(event):
         process_click(event.xdata)
 
 
+def to_txt():
+    with open('line_prof.txt', 'w') as f:
+        f.write('Velocity Channel\n\n')
+        for i in vel:
+            f.write(str(i) + '\n')
+        f.write('\n\nFlux Density\n\n')
+        for i in prof:
+            f.write(str(i) + '\n')
+
+
 def velocities(naxis3, v, profile, win_str):
     global fig
     global ax
@@ -217,5 +227,7 @@ def velocities(naxis3, v, profile, win_str):
     cid = fig.canvas.mpl_connect('button_press_event', on_click)
 
     plt.show()
+
+    to_txt()
 
     return total_flux, error

@@ -301,7 +301,7 @@ def main():
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
     # calculate avg and velocity bounds
-    velocities(naxis3, v, profile, win_str)
+    integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
 
     # Moving on to Voronoi binning section
 
