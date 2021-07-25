@@ -252,6 +252,7 @@ def main():
         userStr = input("Press ENTER to continue...")
 
     userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
+
     binning(userStr)
 
 
@@ -261,7 +262,7 @@ if __name__ == '__main__':
 # TODO- add box showing synthesized beam- how?
 # https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info
 # DONE- Ask if they would like to select the second window.
-# TODO- Return vel and prof from velocity_channel_profile in txt file, with different columns,
+# DONE- Return vel and prof from velocity_channel_profile in txt file, with different columns,
 #   give descriptive name, line_prof.txt
 # TODO- calculate standard deviation/RMS for noise from background fitting box.
 # DONE- ask if the fix I did for vel to flip it is sufficient
