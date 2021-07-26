@@ -159,7 +159,7 @@ def process_click(x):
             lower_error_velocity.append(np.where(vel < background_max[i]))
         error_flux = []
         for i in range(len(upper_error_velocity)):
-            error_flux = prof[np.min(lower_error_velocity[i]):np.max(upper_error_velocity[i])]
+            error_flux = np.append(error_flux, prof[np.min(lower_error_velocity[i]):np.max(upper_error_velocity[i])])
 
         flux_squared = error_flux ** 2
         error_flux_sum = np.sum(flux_squared)

@@ -238,7 +238,7 @@ def main():
     # Extract data from "data"
     velocity_channels = np.array(hdul[0].data)
     velocity_channels = velocity_channels[0, :, (int(small_y) + rbl[1]):(rur[1] + int(small_y)),
-                                                (int(small_x) + rbl[0]):(rur[0] + int(small_x))]
+                        (int(small_x) + rbl[0]):(rur[0] + int(small_x))]
 
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
@@ -260,9 +260,14 @@ if __name__ == '__main__':
     main()
 
 # TODO- add box showing synthesized beam- how?
-# https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info
-# DONE- Ask if they would like to select the second window.
-# DONE- Return vel and prof from velocity_channel_profile in txt file, with different columns,
-#   give descriptive name, line_prof.txt
+# https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info, make sure this is an iterative process,
+#  catch error if not enough signal, try by using extremely high s/n (like 1000 or 1000000). Try to break it, return to
+#  iterative stage
+# TODO- Return vel and prof from velocity_channel_profile in txt file, with different columns,
+#   give descriptive name, line_prof.txt, see below
 # TODO- calculate standard deviation/RMS for noise from background fitting box.
-# DONE- ask if the fix I did for vel to flip it is sufficient
+
+# Velocity Channel | Integrated Flux
+# (km/s) | (Jy km/s)
+# go to hundredth place in terms of velocity,
+# in terms of integrated flux, 5 sig figs
