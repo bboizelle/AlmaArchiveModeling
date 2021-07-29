@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from math import log10, floor
 import numpy as np
 from matplotlib import pyplot as plt
 import math
@@ -187,14 +187,16 @@ def on_click(event):
         process_click(event.xdata)
 
 
+def round_sig(x, sig=5):
+    return round(x, sig-int(floor(log10(abs(x))))-1)
+
+
 def to_txt():
     with open('line_prof.txt', 'w') as f:
-        f.write('Velocity Channel\n\n')
-        for i in vel:
-            f.write(str(i) + '\n')
-        f.write('\n\nFlux Density\n\n')
-        for i in prof:
-            f.write(str(i) + '\n')
+        f.write('Velocity Channel   |   Integrated Flux\n')
+        f.write('(km/s)             |   (Jy km/s)\n\n')
+        for i in range(len(vel)):
+            f.write("         " + str(round(vel[i], 2)) + "   |   " + str(round_sig(prof[i])) + '\n')
 
 
 def velocities(naxis3, v, profile, win_str):

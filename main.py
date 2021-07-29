@@ -257,9 +257,12 @@ def main():
         rur[1] = tmp
     # bbl is background bottom left
     bbl = [math.floor(bbl[0]), math.floor(bbl[1])]
+    # bur is background upper right
     bur = [math.ceil(bur[0]), math.ceil(bur[1])]
     # trim data to match line-fitting boundaries
     limited_data = data[rbl[1]:rur[1], rbl[0]:rur[0]]
+    background_data = data[bbl[1]:bur[1], bbl[0]:bur[0]]
+    #
 
     userStr = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently
@@ -300,7 +303,7 @@ def main():
     # Get velocity channel profile using mask
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
-    # calculate avg and velocity bounds
+    # calculate avg and velocity bounds, returns integrated and error flux
     integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
 
     # Moving on to Voronoi binning section
