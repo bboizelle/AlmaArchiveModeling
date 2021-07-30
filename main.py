@@ -262,7 +262,9 @@ def main():
     # trim data to match line-fitting boundaries
     limited_data = data[rbl[1]:rur[1], rbl[0]:rur[0]]
     background_data = data[bbl[1]:bur[1], bbl[0]:bur[0]]
-    #
+    background_data = background_data.flatten()
+
+    noise = np.sqrt(np.sum(background_data**2))
 
     userStr = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently

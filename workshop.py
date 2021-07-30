@@ -207,6 +207,11 @@ def main():
     bbl = [21, 14]
     bur = [116, 37]
     limited_data = data[rbl[1]:rur[1], rbl[0]:rur[0]]
+    background_data = data[bbl[1]:bur[1], bbl[0]:bur[0]]
+    background_data = background_data.flatten()
+
+    noise = np.sqrt(np.sum(background_data ** 2))
+    print(noise)
     # emission_absorption = input("Is the line seen in emission or absorption? (e/a): ")
     # "a" functionality not implemented currently
     # seen_in_window = input("Is the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
@@ -253,7 +258,7 @@ def main():
 
     userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
 
-    binning(userStr)
+    binning(userStr, limited_data, noise)
 
 
 if __name__ == '__main__':
