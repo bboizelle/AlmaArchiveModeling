@@ -270,4 +270,4 @@ if __name__ == '__main__':
 #  iterative stage
 # DONE- Return vel and prof from velocity_channel_profile in txt file, with different columns,
 #   give descriptive name, line_prof.txt, see below
-# TODO- calculate standard deviation/RMS for noise from background fitting box.
+# DONE- calculate standard deviation/RMS for noise from background fitting box.
