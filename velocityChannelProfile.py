@@ -194,9 +194,9 @@ def round_sig(x, sig=5):
 def to_txt():
     with open('line_prof.txt', 'w') as f:
         f.write('Velocity Channel   |   Integrated Flux\n')
-        f.write('(km/s)             |   (Jy km/s)\n\n')
+        f.write('(km/s)             |  (Jy km/s)\n\n')
         for i in range(len(vel)):
-            f.write("         " + str(round(vel[i], 2)) + "   |   " + str(round_sig(prof[i])) + '\n')
+            f.write("         " + str(round(vel[i], 2)) + "       " + str(round_sig(prof[i])) + '\n')
 
 
 def velocities(naxis3, v, profile, win_str):

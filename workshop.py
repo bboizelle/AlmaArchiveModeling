@@ -211,7 +211,7 @@ def main():
     background_data = background_data.flatten()
 
     noise = np.sqrt(np.sum(background_data ** 2))
-    print(noise)
+
     # emission_absorption = input("Is the line seen in emission or absorption? (e/a): ")
     # "a" functionality not implemented currently
     # seen_in_window = input("Is the molecular emission/absorption clearly seen in the Initial Cube Inspection window? "
@@ -247,14 +247,14 @@ def main():
 
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
-    integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
+    # integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
 
     # Moving on to Voronoi binning section
 
-    print("\nMoving on to the next section")
-    userStr = input("Press ENTER to continue...")
-    while userStr != "":
-        userStr = input("Press ENTER to continue...")
+    # print("\nMoving on to the next section")
+    # userStr = input("Press ENTER to continue...")
+    # while userStr != "":
+    #     userStr = input("Press ENTER to continue...")
 
     userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
 
@@ -268,6 +268,3 @@ if __name__ == '__main__':
 # https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info, make sure this is an iterative process,
 #  catch error if not enough signal, try by using extremely high s/n (like 1000 or 1000000). Try to break it, return to
 #  iterative stage
-# DONE- Return vel and prof from velocity_channel_profile in txt file, with different columns,
-#   give descriptive name, line_prof.txt, see below
-# DONE- calculate standard deviation/RMS for noise from background fitting box.
