@@ -24,8 +24,9 @@ def binning(s_n, data, noise):
     binNum, xBin, yBin, xBar, yBar, sn, nPixels, scale = voronoi_2d_binning(x, y, signal, n, float(s_n), plot=True,
                                                                             quiet=False)
 
-    np.savetxt('voronoi_2d_binning_example_output.txt', np.column_stack([x, y, binNum]),
+    np.savetxt('voronoi_binning_output.txt', np.column_stack([x, y, binNum]),
                fmt=b'%10.6f %10.6f %8i')
 
     plt.tight_layout()
+    plt.savefig("VoronoiBinning.png")
     plt.show()

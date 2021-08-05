@@ -9,7 +9,7 @@ from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
 from voronoi import binning
 from prompt import call
-from velocityChannelProfile import apply_mask, velocities
+from velocityChannelProfile import apply_mask  # velocities
 
 plt.style.use(astropy_mpl_style)
 
