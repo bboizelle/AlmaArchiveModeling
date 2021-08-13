@@ -11,6 +11,7 @@ from astropy.visualization import astropy_mpl_style
 from galaxyShape import shape
 from prompt import call
 from velocityChannelProfile import apply_mask, velocities
+from voronoi import binning
 
 MAX_ATTEMPTS = 5
 attempts = 1
@@ -264,7 +265,7 @@ def main():
     background_data = data[bbl[1]:bur[1], bbl[0]:bur[0]]
     background_data = background_data.flatten()
 
-    noise = np.sqrt(np.sum(background_data**2))
+    noise = np.sqrt(np.sum(background_data**2) / len(background_data))
 
     userStr = input("\nIs the line seen in emission or absorption? (e/a): ")  # FIXME later
     # "a" functionality not implemented currently
@@ -306,7 +307,8 @@ def main():
     profile = apply_mask(velocity_channels, mask) / beam_area  # (Jy)
 
     # calculate avg and velocity bounds, returns integrated and error flux
-    integrated_flux, error_flux = velocities(naxis3, v, profile, win_str)
+    """integrated_flux, error_flux = """  # Velocities returns these when needed
+    velocities(naxis3, v, profile, win_str)
 
     # Moving on to Voronoi binning section
 
@@ -316,6 +318,9 @@ def main():
         userStr = input("Press ENTER to continue...")
 
     userStr = input("\nDesired Voronoi binning S/N (recommend 7.5): ")
+
+    # Bin Voronoi data
+    binning(userStr, limited_data, noise)
 
 
 if __name__ == '__main__':

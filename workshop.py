@@ -210,7 +210,8 @@ def main():
     background_data = data[bbl[1]:bur[1], bbl[0]:bur[0]]
     background_data = background_data.flatten()
 
-    noise = np.sqrt(np.sum(background_data ** 2))
+    noise = np.sqrt(np.sum(background_data**2) / len(background_data))
+    print(noise)
 
     # emission_absorption = input("Is the line seen in emission or absorption? (e/a): ")
     # "a" functionality not implemented currently
@@ -264,7 +265,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-# TODO- add box showing synthesized beam- how?
-# https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info, make sure this is an iterative process,
-#  catch error if not enough signal, try by using extremely high s/n (like 1000 or 1000000). Try to break it, return to
-#  iterative stage
+# TODO- add box showing synthesized beam to images
+# https://www-astro.physics.ox.ac.uk/~mxc/software/ for Voronoi binning info
